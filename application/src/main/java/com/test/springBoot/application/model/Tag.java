@@ -1,5 +1,7 @@
 package com.test.springBoot.application.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -13,6 +15,7 @@ public class Tag {
     private String name;
 
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "tagDevice",cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<Device> deviceTag;
 
     public Tag() {

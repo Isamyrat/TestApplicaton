@@ -1,7 +1,9 @@
 package com.test.springBoot.application.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -13,15 +15,17 @@ public class Device {
 
     private String name;
 
-    private Date year;
+    private String year;
     private Integer count;
     private Double price;
 
     @OneToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     @JoinColumn(name = "brand_id",referencedColumnName = "id",nullable = false)
     private Brand brandDevice;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @JsonBackReference
     @JoinColumn(name = "tag_id")
     Set<Tag> tagDevice;
 
@@ -50,11 +54,11 @@ public class Device {
         this.name = name;
     }
 
-    public Date getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(Date year) {
+    public void setYear(String year) {
         this.year = year;
     }
 
@@ -105,4 +109,5 @@ public class Device {
     public void setBasketDevices(Set<BasketDevice> basketDevices) {
         this.basketDevices = basketDevices;
     }
+
 }

@@ -1,5 +1,7 @@
 package com.test.springBoot.application.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -12,6 +14,7 @@ public class Brand {
     private String name;
 
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "brandDevice", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Device deviceBrand;
 
     public Brand() {

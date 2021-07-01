@@ -67,7 +67,7 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/asd")
+    @GetMapping("/getAllBaskets")
     public List<Basket> getAllBasket() {
         return basketService.getAllBaskets();
     }
