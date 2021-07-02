@@ -1,13 +1,11 @@
 package com.test.springBoot.application.resource;
 
 import com.test.springBoot.application.model.Device;
-import com.test.springBoot.application.model.Tag;
 import com.test.springBoot.application.service.DeviceService;
-import com.test.springBoot.application.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+
 import java.util.List;
 
 @RestController
@@ -45,7 +43,7 @@ public class DeviceController {
     }
 
     @PostMapping("/deleteDevice")
-    public List<Device> deleteDevice(@RequestBody Long deviceId, Short tagId) {
+    public List<Device> deleteDevice(@RequestBody Long deviceId) {
         deviceService.deleteDevice(deviceId);
 
         return deviceService.findAll();

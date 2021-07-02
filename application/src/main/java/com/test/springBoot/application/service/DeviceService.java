@@ -59,18 +59,12 @@ public class DeviceService {
         deviceRepository.save(device);
     }
 
-    public void deleteDevice(Long deviceId,Short tagId) {
+    public void deleteDevice(Long deviceId) {
         Device device = findById(deviceId);
-        Set<Device> tagDevice = new HashSet<>();
         Set<Tag> devices = device.getTagDevice();
-        for (Tag tag: devices) {
-            tagDevice.add(tag.getDeviceTag());
-        }
-        tagService.deleteDeviceTag(tagId,deviceId);
-
-
-
-        devices.removeIf(s -> s.getId().equals(tagId));
+        devices.clear();
+        device.setTagDevice(devices);
+        deviceRepository.save(device);
         deviceRepository.deleteDeviceById(deviceId);
     }
 }

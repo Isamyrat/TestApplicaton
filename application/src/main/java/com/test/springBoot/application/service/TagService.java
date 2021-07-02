@@ -47,6 +47,8 @@ public class TagService {
     public void deleteTag(Short tagId) {
         tagsRepository.deleteById(tagId);
     }
+
+
     public void deleteDeviceTag(Short tagId, Long deviceId) {
         Tag tag = findById(tagId);
         Set<Device> tagDevice = tag.getDeviceTag();
