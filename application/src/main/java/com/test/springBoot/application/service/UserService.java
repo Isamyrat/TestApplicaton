@@ -1,10 +1,12 @@
 package com.test.springBoot.application.service;
 
-import com.test.springBoot.application.dao.BasketRepository;
 import com.test.springBoot.application.dao.UserRepository;
 import com.test.springBoot.application.model.Enum.Roles;
 import com.test.springBoot.application.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
@@ -37,10 +39,10 @@ public class UserService {
     public Boolean saveUser(String name, String email, String password) {
 
         /* Проверка если есть такая почта то не будет добавлять*/
-        /*User userFromDB = userRepository.findByEmail(email);
+        User userFromDB = userRepository.findByEmail(email);
         if (userFromDB != null) {
             return false;
-        }*/
+        }
         User user = new User(name, email, password, Roles.ROLE_USER.toString(), LocalDate.now());
 
         userRepository.save(user);
@@ -68,4 +70,14 @@ public class UserService {
         return findUserById(id);
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        return user;
+    }
 }

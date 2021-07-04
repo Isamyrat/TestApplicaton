@@ -1,5 +1,6 @@
 package com.test.springBoot.application.service;
 
+import com.test.springBoot.application.model.Device;
 import com.test.springBoot.application.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -26,6 +27,9 @@ public class SendEmailService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private DeviceService deviceService;
 
     public SendEmailService(Environment env, JavaMailSender mailSender, ServletContext context) {
         this.env = env;
@@ -113,27 +117,26 @@ public class SendEmailService {
             e.printStackTrace();
         }
     }
-/*
-    public void sendAcceptOrDeniedMail(User user, CallBack callBack) {
+    public void sendMailDeviceBuy(Long id, Long deviceId) {
+        User user = userService.findUserById(id);
+        Device device = deviceService.findById(deviceId);
         MimeMessagePreparator mimeMessagePreparator = mimeMessage -> {
-            ResourceBundle resourceBundle = ResourceBundle.getBundle("locale/messages",Objects.requireNonNull(
-                    Objects.requireNonNull(LocaleContextHolder.getLocaleContext()).getLocale()));
             mimeMessage.setFrom(new InternetAddress(Objects.requireNonNull(env.getProperty("email.sender"))));
-            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(user.getUsername()));
-            mimeMessage.setSubject(resourceBundle.getString("emailRequest"));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
+            mimeMessage.setSubject("The products you purchased!!!");
 
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
             helper.setText("<html><body>" +
-                    "<h1>" + resourceBundle.getString("emailHi") + " " + user.getName() + "!</h1>" +
-                    "<p>" +  resourceBundle.getString("emailRequest") + " " + callBack.getCourseCallBack().getLanguage() + " - " + callBack.getCourseCallBack().getLevel() + " ." +"<p>"+
-                    "<p>" +   resourceBundle.getString("emailResponse") + " " + resourceBundle.getString(callBack.getStatus().toString()) + "." +  "<p>" +
+                    "<h1>" +  "Hello" + " " + user.getName() + "!</h1>" +
+                    "<p>" + "\n" + "List of goods " + ":" + device.getName() + "</p>" +
                     "<p>" + "</p>" +
                     "<p>" + "</p>" +
                     "<p>" + "</p>" +
-                    "<h1>" +  resourceBundle.getString("serverMessage1")  + "!</h1>" +
-                    "<p>" + resourceBundle.getString("serverMessage2") + "(+375-25-765-16-51) - (+375-25-985-14-54)" + "</p>" +
+                    "<h1>" +  "This message was send from server please dont answer!!!!"  + "!</h1>" +
+                    "<p>" + "If you have some questions,  there our  contact data's:" + "(+375-25-765-16-51) - (+375-25-985-14-54)" + "</p>" +
                     "</body></html>", true);
+
         };
 
         try {
@@ -141,6 +144,39 @@ public class SendEmailService {
         } catch (MailException e) {
             e.printStackTrace();
         }
-    }*/
+    }
+
+    public void sendMailDeviceChange(Long id, Long deviceId) {
+        User user = userService.findUserById(id);
+        Device device = deviceService.findById(deviceId);
+        MimeMessagePreparator mimeMessagePreparator = mimeMessage -> {
+            mimeMessage.setFrom(new InternetAddress(Objects.requireNonNull(env.getProperty("email.sender"))));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
+            mimeMessage.setSubject("This products was changed!!!");
+
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+
+            helper.setText("<html><body>" +
+                    "<h1>" +  "Hello" + " " + user.getName() + "!</h1>" +
+                    "<p>" + "\n" + "List of product changes" + ":" + "</p>" +
+                    "<p>"  + device.getName() + "</p>" +
+                    "<p>"  + device.getYear() + "</p>" +
+                    "<p>"  + device.getBrandDevice().getName() + "</p>" +
+                    "<p>"  + device.getCount()+ "</p>" +
+                    "<p>"  + device.getPrice() + "</p>" +
+                    "<p>" + "</p>" +
+                    "<p>" + "</p>" +
+                    "<h1>" +  "This message was send from server please dont answer!!!!"  + "!</h1>" +
+                    "<p>" + "If you have some questions,  there our  contact data's:" + "(+375-25-765-16-51) - (+375-25-985-14-54)" + "</p>" +
+                    "</body></html>", true);
+
+        };
+
+        try {
+            mailSender.send(mimeMessagePreparator);
+        } catch (MailException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

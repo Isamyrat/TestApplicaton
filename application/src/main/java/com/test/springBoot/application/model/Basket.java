@@ -1,6 +1,7 @@
 package com.test.springBoot.application.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 
@@ -17,6 +18,7 @@ public class Basket {
     private User userBasket;
 
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "basket", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private BasketDevice basketDevice;
 
     public Basket() {

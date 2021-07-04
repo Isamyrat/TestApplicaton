@@ -1,5 +1,7 @@
 package com.test.springBoot.application.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 
@@ -11,10 +13,12 @@ public class BasketDevice {
     private Long id;
 
     @OneToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     @JoinColumn(name = "basket_id",referencedColumnName = "id",nullable = false)
     private Basket basket;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     @JoinColumn(name = "device_id", referencedColumnName = "id", nullable = false)
     private Device deviceBasket;
 

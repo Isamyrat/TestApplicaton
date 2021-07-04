@@ -29,8 +29,19 @@ public class DeviceController {
     @PostMapping("/editDevice")
     public Device edit(@RequestBody Long id,String name, String year, Integer count, Double price, Integer brandId) {
 
-        deviceService.editDevice(id, name,year,count,price,brandId);
+        if(!deviceService.editDevice(id, name,year,count,price,brandId)){
+            System.out.println("This device is already in basket");
+        }
 
+        return deviceService.findById(id);
+    }
+
+    @PostMapping("/forceUpdate")
+    public Device forceUpdate(@RequestBody Long id,String name, String year, Integer count, Double price, Integer brandId) {
+
+        if(!deviceService.forceUpdate(id, name,year,count,price,brandId)){
+            System.out.println("This device isn't already in basket");
+        }
 
         return deviceService.findById(id);
     }

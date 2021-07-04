@@ -1,5 +1,7 @@
 package com.test.springBoot.application.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 
@@ -16,6 +18,7 @@ public class DeviceInformation {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "device_id",referencedColumnName = "id",nullable = false)
+    @JsonBackReference
     private Device deviceInformation;
 
     public DeviceInformation() {

@@ -1,9 +1,7 @@
 package com.test.springBoot.application.service;
 
 import com.test.springBoot.application.dao.DeviceRepository;
-import com.test.springBoot.application.model.Brand;
-import com.test.springBoot.application.model.Device;
-import com.test.springBoot.application.model.Tag;
+import com.test.springBoot.application.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +13,19 @@ public class DeviceService {
     private DeviceRepository deviceRepository;
 
     @Autowired
+    private DeviceInformationService deviceInformationService;
+
+    @Autowired
     private BrandService brandService;
+
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private BasketDeviceService basketDeviceService;
+
+    @Autowired
+    private SendEmailService sendEmailService;
 
     public Device findById(Long deviceId) {
         Optional<Device> device = deviceRepository.findById(deviceId);
@@ -41,8 +49,14 @@ public class DeviceService {
         return deviceRepository.findByName(name);
     }
 
-    public void editDevice(Long id,String name, String year, Integer count, Double price, Integer brandId) {
+    public Boolean editDevice(Long id,String name, String year, Integer count, Double price, Integer brandId) {
         Device device = findById(id);
+        List<BasketDevice> basketDevice = basketDeviceService.findByDevice(device);
+
+        if(basketDevice.size() != 0){
+            return false;
+        }
+
         Brand brand = brandService.findById(brandId);
         device.setName(name);
         device.setBrandDevice(brand);
@@ -50,6 +64,37 @@ public class DeviceService {
         device.setCount(count);
         device.setYear(year);
         deviceRepository.save(device);
+        return true;
+    }
+
+    public Boolean forceUpdate(Long id,String name, String year, Integer count, Double price, Integer brandId) {
+        Device device = findById(id);
+        List<BasketDevice> basketDevice = basketDeviceService.findByDevice(device);
+
+        if(basketDevice.size() == 0){
+            return false;
+        }
+
+        Brand brand = brandService.findById(brandId);
+        device.setName(name);
+        device.setBrandDevice(brand);
+        device.setPrice(price);
+        device.setCount(count);
+        device.setYear(year);
+        deviceRepository.save(device);
+        List<Basket> basket = new ArrayList<>();
+        List<User> userList = new ArrayList<>();
+        for(BasketDevice basketDevice1 : basketDevice){
+            basket.add(basketDevice1.getBasket());
+        }
+        for(Basket basket1 : basket){
+            userList.add(basket1.getUserBasket());
+        }
+
+        for(User user : userList){
+            sendEmailService.sendMailDeviceChange(user.getId(), device.getId());
+        }
+        return true;
     }
     public void addDevice(Long id, Short tagId) {
         Device device = findById(id);
@@ -65,6 +110,8 @@ public class DeviceService {
         devices.clear();
         device.setTagDevice(devices);
         deviceRepository.save(device);
+        basketDeviceService.deleteBasketDeviceForDevice(deviceId);
+        deviceInformationService.deleteDeviceInformationByDeviceId(deviceId);
         deviceRepository.deleteDeviceById(deviceId);
     }
 }

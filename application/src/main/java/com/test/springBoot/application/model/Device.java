@@ -1,6 +1,7 @@
 package com.test.springBoot.application.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -30,9 +31,11 @@ public class Device {
     Set<Tag> tagDevice;
 
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "deviceInformation", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private DeviceInformation deviceInformationS;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "deviceBasket", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<BasketDevice> basketDevices;
 
     public Device() {

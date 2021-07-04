@@ -23,43 +23,15 @@ public class UserController {
     @Autowired
     private BasketService basketService;
 
-   /* Для перехода в страницу регистрации (Регистрация)*/
-    /*
-    @GetMapping("/registration")
-    public String registration(Model model) {
-
-        model.addAttribute("userForm", new User());
-
-        return "--/--";
-    }*/
-
     @PostMapping
     public List<User> addUser(@RequestBody String name, String email, String password) {
-       /*  Проверка на существование аккаунта!!!
+        // Проверка на существование аккаунта!!!
        if (!userService.saveUser(name,email,password)){
-            model.addAttribute("usernameError", "User with this email is already exist!!!");
-            return "--/--";
-        }*/
-
-        userService.saveUser(name, email, password);
+           System.out.println("User with this email is already exist!!!");
+        }
 
         return userService.getAllUsers();
     }
-
-
-    /*   --/--   Для перехова в профиль (User)  --/-- */
-
-   /* @GetMapping("/personalInformationUser")
-    public String personalInformationUser(Model model) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        User user = userService.findUserByName(userDetails.getEmail());
-
-        model.addAttribute("userId", userService.findUserById(user.getId()));
-        return "--/--";
-    }*/
 
     /* Получение всех пользователей (Admin)*/
     @GetMapping
@@ -72,21 +44,6 @@ public class UserController {
         return basketService.getAllBaskets();
     }
 
-
-    /*   --/--   Для перехова в профиль чтобы изменить (User)  --/-- */
-
-   /* @GetMapping("/userEdit")
-    public String personalInformationUser(Model model) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        User user = userService.getUser(userDetails.getUsername());
-
-        model.addAttribute("userEdit", userService.findUserById(user.getId()));
-
-        return "--/--";
-    }*/
 
     /*   --/--  Изменение данных (User)
     P.S. учел момент если пользователь поменяет почту --/-- */

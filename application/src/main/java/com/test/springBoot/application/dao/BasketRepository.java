@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 public interface BasketRepository extends JpaRepository<Basket, Long> {
+    @Query("select b from Basket b where b.userBasket.id = :id")
+    Basket findByUserId(Long id);
 
     @Modifying
     @Transactional
