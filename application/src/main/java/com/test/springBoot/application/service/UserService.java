@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,6 +21,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private SendEmailService sendEmailService;
+
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     BasketService basketService;
@@ -44,7 +48,7 @@ public class UserService implements UserDetailsService {
             return false;
         }
         User user = new User(name, email, password, Roles.ROLE_USER.toString(), LocalDate.now());
-
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         sendEmailService.sendRegistrationMail(user.getId());
         basketService.saveBasket(user.getId());
